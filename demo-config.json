@@ -1,0 +1,12 @@
+{
+    "StagingUrl":  "https://sre-demo-app-12345-veu-staging.azurewebsites.net",
+    "SetupTime":  {
+                      "value":  "\/Date(1770571802650)\/",
+                      "DisplayHint":  2,
+                      "DateTime":  "Sunday, February 8, 2026 11:00:02 PM"
+                  },
+    "ResourceGroup":  "sre-demo-rg",
+    "ProductionUrl":  "https://sre-demo-app-12345-veu.azurewebsites.net",
+    "AppService":  "sre-demo-app-12345-veu",
+    "AppInsights":  "sre-demo-app-12345-veu-ai"
+}

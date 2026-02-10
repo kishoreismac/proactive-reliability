@@ -5,8 +5,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddOpenApi();
 
-// Add Application Insights
-builder.Services.AddApplicationInsightsTelemetry();
+// Add Application Insights with optimized sampling
+builder.Services.AddApplicationInsightsTelemetry(options =>
+{
+    // Reduce telemetry overhead with adaptive sampling
+    options.EnableAdaptiveSampling = true;
+    options.EnablePerformanceCounterCollectionModule = false; // Reduce overhead
+});
 
 // Add health checks with custom performance checks
 builder.Services.AddHealthChecks()

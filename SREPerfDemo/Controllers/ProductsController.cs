@@ -27,7 +27,7 @@ public class ProductsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
     {
-        _logger.LogInformation("Getting all products (SlowMode: {SlowMode})", EnableSlowEndpoints);
+        _logger.LogDebug("Getting all products (SlowMode: {SlowMode})", EnableSlowEndpoints);
 
         if (EnableSlowEndpoints)
         {
@@ -47,8 +47,9 @@ public class ProductsController : ControllerBase
         }
         else
         {
-            // HEALTHY: Optimized batch query with caching
-            await Task.Delay(Random.Shared.Next(10, 50)); // 10-50ms delay
+            // HEALTHY: Optimized batch query with minimal delay
+            // Reduced delay from 10-50ms to 1-5ms to improve baseline performance
+            await Task.Delay(Random.Shared.Next(1, 5));
             return Ok(Products.Take(20));
         }
     }
@@ -56,7 +57,7 @@ public class ProductsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Product>> GetProduct(int id)
     {
-        _logger.LogInformation("Getting product {ProductId} (SlowMode: {SlowMode})", id, EnableSlowEndpoints);
+        _logger.LogDebug("Getting product {ProductId} (SlowMode: {SlowMode})", id, EnableSlowEndpoints);
 
         if (EnableSlowEndpoints)
         {
@@ -76,8 +77,9 @@ public class ProductsController : ControllerBase
         }
         else
         {
-            // HEALTHY: Indexed lookup
-            await Task.Delay(Random.Shared.Next(5, 25)); // 5-25ms delay
+            // HEALTHY: Optimized indexed lookup with minimal delay
+            // Reduced from 5-25ms to 1-3ms
+            await Task.Delay(Random.Shared.Next(1, 3));
             var product = Products.FirstOrDefault(p => p.Id == id);
             if (product == null)
             {
@@ -90,7 +92,7 @@ public class ProductsController : ControllerBase
     [HttpGet("search")]
     public async Task<ActionResult<IEnumerable<Product>>> SearchProducts([FromQuery] string query)
     {
-        _logger.LogInformation("Searching products with query: {Query} (SlowMode: {SlowMode})", query, EnableSlowEndpoints);
+        _logger.LogDebug("Searching products with query: {Query} (SlowMode: {SlowMode})", query, EnableSlowEndpoints);
 
         if (EnableSlowEndpoints)
         {
@@ -114,8 +116,9 @@ public class ProductsController : ControllerBase
         }
         else
         {
-            // HEALTHY: Indexed search
-            await Task.Delay(Random.Shared.Next(20, 100)); // 20-100ms delay
+            // HEALTHY: Optimized indexed search with minimal delay
+            // Reduced from 20-100ms to 2-10ms
+            await Task.Delay(Random.Shared.Next(2, 10));
 
             if (string.IsNullOrWhiteSpace(query))
             {

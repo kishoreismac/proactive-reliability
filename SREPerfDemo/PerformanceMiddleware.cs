@@ -33,12 +33,15 @@ public class PerformanceMiddleware
             // Record for health checks
             PerformanceHealthCheck.RecordResponseTime(responseTimeMs);
 
-            // Log performance data
-            _logger.LogInformation("Request {Method} {Path} completed in {ResponseTime}ms with status {StatusCode}",
-                context.Request.Method,
-                context.Request.Path,
-                Math.Round(responseTimeMs, 2),
-                context.Response.StatusCode);
+            // Log performance data (only for slow requests to reduce overhead)
+            if (responseTimeMs > 100)
+            {
+                _logger.LogInformation("Request {Method} {Path} completed in {ResponseTime}ms with status {StatusCode}",
+                    context.Request.Method,
+                    context.Request.Path,
+                    Math.Round(responseTimeMs, 2),
+                    context.Response.StatusCode);
+            }
 
             // Add custom header for monitoring
             context.Response.Headers["X-Response-Time-Ms"] = responseTimeMs.ToString("F2");
@@ -61,8 +64,8 @@ public class PerformanceMiddleware
     {
         lock (_metricsLock)
         {
-            // Only emit every 30 seconds to avoid flooding
-            if ((DateTime.UtcNow - _lastMetricsEmit).TotalSeconds < 30)
+            // Only emit every 60 seconds to reduce overhead
+            if ((DateTime.UtcNow - _lastMetricsEmit).TotalSeconds < 60)
                 return;
 
             _lastMetricsEmit = DateTime.UtcNow;
